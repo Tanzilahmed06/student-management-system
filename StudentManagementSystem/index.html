@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Management System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    input, button, textarea {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 80%;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+    th {
+      background: #333;
+    }
+    textarea {
+      width: 60%;
+      height: 100px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Student Management System</h1>
+
+<h3>Add Single Student</h3>
+<input type="text" id="roll" placeholder="Roll Number">
+<input type="text" id="name" placeholder="Name">
+<input type="text" id="course" placeholder="Course">
+<br>
+<button onclick="addStudent()">Add</button>
+
+<h3>Add Multiple Students (one per line: roll,name,course)</h3>
+<textarea id="bulkInput" placeholder="101,Ali,CS\n102,Ahmed,IT"></textarea><br>
+<button onclick="addMultipleStudents()">Add Multiple</button>
+
+<br>
+<button onclick="searchStudent()">Search</button>
+<button onclick="deleteStudent()">Delete</button>
+<button onclick="displayStudents()">View All</button>
+
+<table id="studentTable">
+  <thead>
+    <tr>
+      <th>Roll</th>
+      <th>Name</th>
+      <th>Course</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+  let students = [];
+
+  function addStudent() {
+    let roll = document.getElementById("roll").value;
+    let name = document.getElementById("name").value;
+    let course = document.getElementById("course").value;
+
+    if (!roll || !name || !course) {
+      alert("All fields required!");
+      return;
+    }
+
+    let exists = students.find(s => s.roll === roll);
+    if (exists) {
+      alert("Roll already exists!");
+      return;
+    }
+
+    students.push({ roll, name, course });
+    displayStudents();
+  }
+
+  function addMultipleStudents() {
+    let input = document.getElementById("bulkInput").value;
+    let lines = input.split("\n");
+
+    lines.forEach(line => {
+      let parts = line.split(",");
+      if (parts.length !== 3) return;
+
+      let [roll, name, course] = parts.map(p => p.trim());
+
+      if (!roll || !name || !course) return;
+
+      let exists = students.find(s => s.roll === roll);
+      if (!exists) {
+        students.push({ roll, name, course });
+      }
+    });
+
+    displayStudents();
+    alert("Multiple students added!");
+  }
+
+  function displayStudents() {
+    let tbody = document.querySelector("#studentTable tbody");
+    tbody.innerHTML = "";
+
+    students.forEach(s => {
+      let row = `<tr>
+        <td>${s.roll}</td>
+        <td>${s.name}</td>
+        <td>${s.course}</td>
+      </tr>`;
+      tbody.innerHTML += row;
+    });
+  }
+
+  function searchStudent() {
+    let roll = document.getElementById("roll").value;
+    let student = students.find(s => s.roll === roll);
+
+    if (student) {
+      alert(`Found: ${student.name} (${student.course})`);
+    } else {
+      alert("Student not found");
+    }
+  }
+
+  function deleteStudent() {
+    let roll = document.getElementById("roll").value;
+    students = students.filter(s => s.roll !== roll);
+    displayStudents();
+  }
+</script>
+
+</body>
+</html>
